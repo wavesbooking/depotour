@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boulevard Depo — Тур а-ля карт 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0c;
+    --surface: #141414;
+    --border: #222222;
+    --accent: #e8001c;
+    --accent2: #ff4444;
+    --text: #f0ece4;
+    --muted: #555555;
+    --green: #4caf50;
+    --yellow: #ff9800;
+    --red: #e8001c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tour-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .tour-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .update-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .pulse {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.7); }
+  }
+
+  /* SUMMARY ROW */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary-card {
+    background: var(--bg);
+    padding: 18px 20px;
+    text-align: center;
+  }
+
+  .summary-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: #3a7d44;
+    line-height: 1;
+  }
+
+  .summary-label {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 5px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* MAIN */
+  .main { padding: 16px; }
+
+  /* CONCERT CARD */
+  .concert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    border-left: 3px solid transparent;
+  }
+
+  .concert-card:hover { border-left-color: var(--accent); }
+
+  .concert-card.past { opacity: 0.35; }
+
+  .card-header {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .card-date-block {
+    background: var(--border);
+    padding: 14px 16px;
+    text-align: center;
+    min-width: 66px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .date-day {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .date-month {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .card-info {
+    flex: 1;
+    padding: 12px 14px;
+  }
+
+  .card-city {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .card-venue {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .card-right {
+    padding: 12px 14px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .days-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 0;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 1px;
+  }
+
+  .days-soon { background: rgba(232,0,28,0.15); color: var(--accent); border: 1px solid rgba(232,0,28,0.4); }
+  .days-near { background: rgba(255,152,0,0.1); color: var(--yellow); border: 1px solid rgba(255,152,0,0.3); }
+  .days-far  { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .days-past { background: transparent; color: #333; border: 1px solid #222; }
+
+  /* FILL BAR */
+  .fill-section {
+    padding: 10px 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .fill-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+
+  .fill-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .fill-numbers {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .fill-sold {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .fill-cap {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .fill-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .bar-track {
+    height: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bar-green  { background: #4caf50; }
+  .bar-yellow { background: #ff9800; }
+  .bar-red    { background: var(--accent); }
+  .bar-lime   { background: var(--accent); }
+
+  /* MANUAL CAPACITY EDIT */
+  .cap-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    border-bottom: 1px dashed var(--muted);
+    padding-bottom: 1px;
+  }
+
+  .cap-edit:hover { border-color: var(--accent); color: var(--accent); }
+
+  .edit-icon { font-size: 9px; }
+
+  /* LOADING/ERROR */
+  .loading-overlay {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .spinner {
+    width: 24px; height: 24px;
+    border: 1px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* CONFIG PANEL */
+  .config-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 20px;
+    margin: 16px;
+    margin-bottom: 0;
+  }
+
+  .config-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .config-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .config-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .config-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .config-input:focus { border-color: var(--accent); }
+
+  .config-hint {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 12px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: opacity 0.2s;
+    width: 100%;
+  }
+
+  .btn:hover { opacity: 0.85; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    border-radius: 0;
+    padding: 24px 20px 32px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .modal-city { color: var(--accent); }
+
+  .error-msg {
+    background: rgba(232,0,28,0.08);
+    border: 1px solid rgba(232,0,28,0.25);
+    color: var(--accent);
+    border-radius: 0;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  /* LAST UPDATE */
+  .last-update {
+    text-align: center;
+    padding: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 1px;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding: 20px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  /* PROXY NOTICE */
+  .proxy-notice {
+    background: rgba(232,0,28,0.05);
+    border: 1px solid rgba(232,0,28,0.15);
+    border-radius: 0;
+    padding: 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .proxy-notice strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div>
+      <div class="tour-name" id="tourTitle">Boulevard Depo</div>
+      <div class="tour-sub" id="tourSub">тур а-ля карт · 2026</div>
+    </div>
+  </div>
+  <div class="update-badge">
+    <div class="pulse"></div>
+    <span id="updateLabel">live</span>
+  </div>
+</header>
+
+<!-- SUMMARY -->
+<div class="summary" id="summaryRow" style="display:none">
+  <div class="summary-card">
+    <div class="summary-val" id="sumShows">—</div>
+    <div class="summary-label">Концертов</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-val" id="sumSold">—</div>
+    <div class="summary-label">Продано</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-val" id="sumFill">—</div>
+    <div class="summary-label">Ср. заполнение</div>
+  </div>
+</div>
+
+<!-- CONFIG PANEL (shown when no token) -->
+<div id="configPanel" class="config-panel" style="display:none">
+  <div class="config-title">⚙ Настройка дашборда</div>
+
+  <div class="proxy-notice">
+    <strong>Важно:</strong> Qtickets API не поддерживает CORS из браузера напрямую.
+    Нужен прокси-сервер. Введите ниже URL вашего прокси или используйте
+    <a href="#instructions" style="color:var(--accent)">инструкцию ниже</a> для деплоя бесплатного воркера.
+  </div>
+
+  <div class="config-row">
+    <div class="config-label">Название тура</div>
+    <input class="config-input" id="cfgTitle" placeholder="Мой Тур 2025" value="">
+  </div>
+
+  <div class="config-row">
+    <div class="config-label">URL прокси</div>
+    <input class="config-input" id="cfgProxy" placeholder="https://your-worker.workers.dev" value="">
+    <div class="config-hint">Cloudflare Worker или любой прокси, который добавляет Authorization и пробрасывает запросы к qtickets.ru/api/rest/v1</div>
+  </div>
+
+  <div class="config-row">
+    <div class="config-label">ID мероприятий через запятую</div>
+    <input class="config-input" id="cfgEvents" placeholder="1234, 1235, 1236" value="">
+    <div class="config-hint">Или оставьте пустым — загрузятся все активные мероприятия</div>
+  </div>
+
+  <button class="btn" onclick="saveConfig()">Сохранить и загрузить</button>
+  <button class="btn btn-outline" onclick="loadDemo()">Демо-режим (фейковые данные)</button>
+</div>
+
+<!-- CONTENT -->
+<div class="main" id="mainContent" style="display:none">
+  <div class="section-label" id="upcomingLabel"></div>
+  <div id="concertList"></div>
+  <div class="last-update" id="lastUpdateTime"></div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingState" class="loading-overlay" style="display:none">
+  <div class="spinner"></div>
+  Загружаем данные...
+</div>
+
+<!-- EDIT CAPACITY MODAL -->
+<div class="modal-overlay" id="editModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">Изменить вместимость — <span class="modal-city" id="modalCity"></span></div>
+    <div class="error-msg" id="modalError"></div>
+    <div class="config-row">
+      <div class="config-label">Вместимость площадки</div>
+      <input class="config-input" id="modalCapInput" type="number" placeholder="3000">
+    </div>
+    <div class="config-row">
+      <div class="config-label">Продано билетов (ручной ввод)</div>
+      <input class="config-input" id="modalSoldOverride" type="number" placeholder="Оставьте пустым — берём из API">
+      <div class="config-hint">Если API не даёт нужных данных, можно ввести вручную</div>
+    </div>
+    <button class="btn" onclick="saveCapacity()">Сохранить</button>
+    <button class="btn btn-outline" onclick="closeModal()">Отмена</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG
+// ============================================================
+const STORAGE_KEY = 'tour_dashboard_v2';
+const REFRESH_INTERVAL = 6 * 60 * 60 * 1000; // 6 часов
+
+let state = {
+  proxyUrl: 'https://long-mud-44eb.smirnovaofc.workers.dev',
+  tourTitle: 'Boulevard Depo — Тур а-ля карт',
+  eventIds: ['225254','225255','225257','225258','225260','225261','225262','225264','225265','225267','225268','225269'],
+  capacities: {
+    '225254': { cap: 1000,  soldOverride: null },
+    '225255': { cap: 1700,  soldOverride: null },
+    '225257': { cap: 1500,  soldOverride: null },
+    '225258': { cap: 1500,  soldOverride: null },
+    '225260': { cap: 1000,  soldOverride: null },
+    '225261': { cap: 1500,  soldOverride: null },
+    '225262': { cap: 2000,  soldOverride: null },
+    '225264': { cap: 930,   soldOverride: null },
+    '225265': { cap: 1200,  soldOverride: null },
+    '225267': { cap: 3000,  soldOverride: null },
+    '225268': { cap: 6300,  soldOverride: null },
+    '225269': { cap: 3500,  soldOverride: null },
+  },      // { eventId: { cap: N, soldOverride: N|null } }
+  events: [],          // загруженные данные
+  lastFetch: null,
+};
+
+let editingEventId = null;
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  if (state.proxyUrl) {
+    fetchData();
+    setInterval(fetchData, REFRESH_INTERVAL);
+  }
+  // refresh timer display
+  setInterval(updateTimerDisplay, 60000);
+});
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+    const parsed = JSON.parse(saved);
+    if (parsed.events) state.events = parsed.events;
+    if (parsed.lastFetch) state.lastFetch = parsed.lastFetch;
+  }
+  } catch(e) {}
+  if (state.tourTitle) {
+    document.getElementById('tourTitle').textContent = state.tourTitle;
+    document.getElementById('cfgTitle').value = state.tourTitle;
+  }
+  if (state.proxyUrl) {
+    document.getElementById('cfgProxy').value = state.proxyUrl;
+    document.getElementById('configPanel').style.display = 'none';
+  }
+  if (state.eventIds.length) {
+    document.getElementById('cfgEvents').value = state.eventIds.join(', ');
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    proxyUrl: state.proxyUrl,
+    tourTitle: state.tourTitle,
+    eventIds: state.eventIds,
+    capacities: state.capacities,
+    lastFetch: state.lastFetch,
+    events: state.events,
+  }));
+}
+
+// ============================================================
+//  CONFIG SAVE
+// ============================================================
+function saveConfig() {
+  state.tourTitle = document.getElementById('cfgTitle').value.trim() || 'ТУР 2025';
+  state.proxyUrl  = document.getElementById('cfgProxy').value.trim().replace(/\/$/, '');
+  const ids = document.getElementById('cfgEvents').value;
+  state.eventIds = ids ? ids.split(',').map(x => x.trim()).filter(Boolean) : [];
+
+  document.getElementById('tourTitle').textContent = state.tourTitle;
+  saveState();
+
+  if (!state.proxyUrl) { alert('Введите URL прокси'); return; }
+  document.getElementById('configPanel').style.display = 'none';
+  fetchData();
+  setInterval(fetchData, REFRESH_INTERVAL);
+}
+
+// ============================================================
+//  API CALLS (through proxy)
+// ============================================================
+async function apiFetch(path, body = null) {
+  const url = state.proxyUrl + path;
+  const opts = {
+    method: body ? 'POST' : 'GET',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function fetchData() {
+  showLoading(true);
+  try {
+    let events = [];
+
+    if (state.eventIds.length) {
+      // Загружаем конкретные мероприятия
+      events = await Promise.all(
+        state.eventIds.map(id => apiFetch(`/events/${id}`).then(r => r.data))
+      );
+    } else {
+      // Загружаем все активные
+      const r = await apiFetch('/events', { where: [{ column: 'deleted_at', operator: 'null' }], orderBy: { id: 'asc' }, page: 1 });
+      events = r.data || [];
+    }
+
+    // Для каждого мероприятия получаем кол-во проданных билетов через /sold/{show_id}
+    // Этот маршрут считает barcodes — работает для любого типа схемы (места + входные)
+    events = await Promise.all(events.map(async ev => {
+      const show = (ev.shows || []).find(s => s.is_active) || (ev.shows || [])[0];
+      if (!show) return { ...ev, _soldCount: 0, _seatsTotal: 0 };
+
+      try {
+        const soldData = await apiFetch(`/sold/${show.id}`);
+        return { ...ev, _soldCount: soldData.sold || 0, _seatsTotal: 0, _show: show };
+      } catch(e) {
+        return { ...ev, _soldCount: 0, _seatsTotal: 0, _show: show };
+      }
+    }));
+
+    state.events = events;
+    state.lastFetch = new Date().toISOString();
+    saveState();
+    renderDashboard();
+  } catch(err) {
+    console.error(err);
+    // Если есть кэш — показываем его
+    if (state.events.length) {
+      renderDashboard();
+    } else {
+      showError('Ошибка загрузки. Проверьте URL прокси и попробуйте снова.');
+    }
+  } finally {
+    showLoading(false);
+  }
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function renderDashboard() {
+  const events = state.events;
+  if (!events.length) { showError('Мероприятий не найдено'); return; }
+
+  // Sort by date
+  const sorted = [...events].sort((a, b) => {
+    const da = getEventDate(a), db = getEventDate(b);
+    return da - db;
+  });
+
+  const now = new Date();
+  const upcoming = sorted.filter(e => getEventDate(e) >= now);
+  const past     = sorted.filter(e => getEventDate(e) <  now);
+
+  // Summary
+  const allSold = sorted.reduce((s, e) => s + getSold(e), 0);
+  const allCap  = sorted.reduce((s, e) => s + getCap(e), 0);
+  const avgFill = allCap ? Math.round(allSold / allCap * 100) : 0;
+
+  document.getElementById('sumShows').textContent = upcoming.length;
+  document.getElementById('sumSold').textContent  = allSold.toLocaleString('ru');
+  document.getElementById('sumFill').textContent  = avgFill + '%';
+  document.getElementById('summaryRow').style.display = '';
+
+  // List
+  const list = document.getElementById('concertList');
+  list.innerHTML = '';
+
+  if (upcoming.length) {
+    document.getElementById('upcomingLabel').textContent = `Предстоящие · ${upcoming.length}`;
+    upcoming.forEach(e => list.appendChild(buildCard(e, false)));
+  }
+
+  if (past.length) {
+    const pastLabel = document.createElement('div');
+    pastLabel.className = 'section-label';
+    pastLabel.textContent = `Прошедшие · ${past.length}`;
+    list.appendChild(pastLabel);
+    past.slice().reverse().forEach(e => list.appendChild(buildCard(e, true)));
+  }
+
+  updateTimerDisplay();
+  document.getElementById('mainContent').style.display = '';
+  document.getElementById('tourSub').textContent = `${sorted.length} концертов`;
+}
+
+function buildCard(ev, isPast) {
+  const date     = getEventDate(ev);
+  const daysLeft = Math.ceil((date - new Date()) / 86400000);
+  const sold     = getSold(ev);
+  const cap      = getCap(ev);
+  const pct      = cap ? Math.round(sold / cap * 100) : 0;
+
+  const card = document.createElement('div');
+  card.className = 'concert-card' + (isPast ? ' past' : '');
+
+  // Date parts
+  const day   = date.toLocaleDateString('ru', { day:  '2-digit' });
+  const month = date.toLocaleDateString('ru', { month: 'short'  }).replace('.','');
+
+  // Days badge
+  let badgeClass, badgeText;
+  if (isPast) { badgeClass = 'days-past'; badgeText = 'завершён'; }
+  else if (daysLeft <= 7)  { badgeClass = 'days-soon'; badgeText = daysLeft === 0 ? 'СЕГОДНЯ' : `${daysLeft} дн`; }
+  else if (daysLeft <= 30) { badgeClass = 'days-near'; badgeText = `${daysLeft} дн`; }
+  else { badgeClass = 'days-far'; badgeText = `${daysLeft} дн`; }
+
+  // Bar colour
+  let barClass;
+  if (pct >= 90)      barClass = 'bar-lime';
+  else if (pct >= 70) barClass = 'bar-green';
+  else if (pct >= 40) barClass = 'bar-yellow';
+  else                barClass = 'bar-red';
+
+  // Sold colour
+  let soldColor = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--accent2)';
+  if (isPast) soldColor = 'var(--muted)';
+
+  const city  = getCityName(ev);
+  const venue = ev.place_name || '—';
+  const capDisplay = cap ? cap.toLocaleString('ru') : '?';
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="card-date-block">
+        <div class="date-day">${day}</div>
+        <div class="date-month">${month}</div>
+      </div>
+      <div class="card-info">
+        <div class="card-city">${city}</div>
+        <div class="card-venue">${venue}</div>
+      </div>
+      <div class="card-right">
+        <span class="days-badge ${badgeClass}">${badgeText}</span>
+      </div>
+    </div>
+    <div class="fill-section">
+      <div class="fill-row">
+        <div class="fill-label">Продано</div>
+        <div class="fill-numbers">
+          <span class="fill-sold" style="color:${soldColor}">${sold.toLocaleString('ru')}</span>
+          <span class="fill-cap">/ ${capDisplay}</span>
+        </div>
+      </div>
+      <div class="fill-row" style="margin-bottom:8px">
+        <div class="fill-label">Заполнение</div>
+        <div class="fill-pct" style="color:${soldColor}">${pct}%</div>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill ${barClass}" style="width:${Math.min(pct,100)}%"></div>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function getEventDate(ev) {
+  const show = ev._show || (ev.shows || [])[0];
+  const d = show?.start_date || ev.start_date || ev.created_at;
+  return d ? new Date(d) : new Date(0);
+}
+
+function getCityName(ev) {
+  if (ev.city?.name) return ev.city.name;
+  if (ev.place_address) {
+    const parts = ev.place_address.split(',');
+    return parts[0].trim();
+  }
+  return ev.name || '—';
+}
+
+function getCap(ev) {
+  const manual = state.capacities[ev.id];
+  if (manual?.cap) return manual.cap;
+  return ev._seatsTotal || 0;
+}
+
+function getSold(ev) {
+  const manual = state.capacities[ev.id];
+  if (manual?.soldOverride != null) return manual.soldOverride;
+  return ev._soldCount || 0;
+}
+
+function escHtml(s) {
+  return s.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+}
+
+function updateTimerDisplay() {
+  if (!state.lastFetch) return;
+  const d = new Date(state.lastFetch);
+  const timeStr = d.toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = d.toLocaleDateString('ru', { day: '2-digit', month: '2-digit' });
+  document.getElementById('lastUpdateTime').textContent =
+    `Обновлено ${dateStr} в ${timeStr} · Следующее через ~6 ч`;
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+function openModal(evId, city) {
+  editingEventId = evId;
+  document.getElementById('modalCity').textContent = city;
+  const saved = state.capacities[evId] || {};
+  document.getElementById('modalCapInput').value = saved.cap || '';
+  document.getElementById('modalSoldOverride').value = saved.soldOverride != null ? saved.soldOverride : '';
+  document.getElementById('modalError').style.display = 'none';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function saveCapacity() {
+  const cap  = parseInt(document.getElementById('modalCapInput').value) || 0;
+  const sold = document.getElementById('modalSoldOverride').value;
+  const soldVal = sold !== '' ? parseInt(sold) : null;
+
+  if (!cap) {
+    document.getElementById('modalError').textContent = 'Введите вместимость';
+    document.getElementById('modalError').style.display = 'block';
+    return;
+  }
+  state.capacities[editingEventId] = { cap, soldOverride: soldVal };
+  saveState();
+  closeModal();
+  renderDashboard();
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('editModal')) return;
+  document.getElementById('editModal').classList.remove('open');
+  editingEventId = null;
+}
+
+// ============================================================
+//  UI HELPERS
+// ============================================================
+function showLoading(v) {
+  document.getElementById('loadingState').style.display = v ? 'block' : 'none';
+}
+
+function showError(msg) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  const d = document.createElement('div');
+  d.className = 'loading-overlay';
+  d.innerHTML = `<p style="color:var(--accent2)">${msg}</p>
+    <button class="btn" style="width:auto;margin-top:16px" onclick="document.getElementById('configPanel').style.display='';this.parentNode.remove()">Настройки</button>`;
+  document.body.appendChild(d);
+}
+
+// ============================================================
+//  DEMO MODE
+// ============================================================
+function loadDemo() {
+  state.proxyUrl  = '__demo__';
+  state.tourTitle = 'ARTEFAKT TOUR 2025';
+  document.getElementById('tourTitle').textContent = state.tourTitle;
+
+  const now = new Date();
+  const d = (offset) => {
+    const dt = new Date(now); dt.setDate(dt.getDate() + offset);
+    return dt.toISOString();
+  };
+
+  state.events = [
+    { id: '1', name: 'Москва', place_name: 'Stadium Live', place_address: 'Москва, Лужники', _soldCount: 3820, _seatsTotal: 5000, _show: { start_date: d(3), is_active:1 } },
+    { id: '2', name: 'Санкт-Петербург', place_name: 'A2 Green Concert', place_address: 'Санкт-Петербург, Парнас', _soldCount: 1450, _seatsTotal: 2200, _show: { start_date: d(12), is_active:1 } },
+    { id: '3', name: 'Екатеринбург', place_name: 'Уральский центр', place_address: 'Екатеринбург, Ельцин Центр', _soldCount: 870, _seatsTotal: 1500, _show: { start_date: d(25), is_active:1 } },
+    { id: '4', name: 'Казань', place_name: 'Пирамида', place_address: 'Казань, Пирамида', _soldCount: 420, _seatsTotal: 1800, _show: { start_date: d(38), is_active:1 } },
+    { id: '5', name: 'Новосибирск', place_name: 'Академпарк', place_address: 'Новосибирск', _soldCount: 290, _seatsTotal: 1200, _show: { start_date: d(52), is_active:1 } },
+    { id: '6', name: 'Краснодар', place_name: 'Баскет-холл', place_address: 'Краснодар', _soldCount: 2100, _seatsTotal: 2100, _show: { start_date: d(-14), is_active:1 } },
+    { id: '7', name: 'Воронеж', place_name: 'Концертный зал', place_address: 'Воронеж', _soldCount: 650, _seatsTotal: 1100, _show: { start_date: d(-30), is_active:1 } },
+  ];
+  state.capacities = {
+    '4': { cap: 1800, soldOverride: null },
+  };
+  state.lastFetch = new Date().toISOString();
+  document.getElementById('configPanel').style.display = 'none';
+  renderDashboard();
+}
+</script>
+
+<!-- INSTRUCTIONS ANCHOR -->
+<div id="instructions"></div>
+
+</body>
+</html>
