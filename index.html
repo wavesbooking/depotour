@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Boulevard Depo — Тур а-ля карт 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0c0c0c;
     --surface: #141414;
-    --border: #222222;
+    --border: #3a3a3a;
     --accent: #e8001c;
     --accent2: #ff4444;
     --text: #f0ece4;
-    --muted: #555555;
-    --green: #4caf50;
+    --muted: #888888;
+    --green: #3a7d44;
     --yellow: #ff9800;
     --red: #e8001c;
   }
@@ -33,7 +33,7 @@
   .header {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 20px 20px 16px;
+    padding: 16px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -49,10 +49,10 @@
   }
 
   .tour-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
     color: var(--text);
     line-height: 1;
   }
@@ -103,11 +103,12 @@
   }
 
   .summary-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px;
-    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
     color: #3a7d44;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
   .summary-label {
@@ -127,15 +128,11 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 0;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     overflow: hidden;
-    transition: border-color 0.2s;
-    border-left: 3px solid transparent;
   }
 
-  .concert-card:hover { border-left-color: var(--accent); }
-
-  .concert-card.past { opacity: 0.35; }
+  .concert-card.past { opacity: 0.3; }
 
   .card-header {
     display: flex;
@@ -144,31 +141,33 @@
   }
 
   .card-date-block {
-    background: var(--border);
-    padding: 14px 16px;
+    background: #1a1a1a;
+    padding: 12px 14px;
     text-align: center;
-    min-width: 66px;
+    min-width: 58px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     border-right: 1px solid var(--border);
   }
 
   .date-day {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px;
-    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
     line-height: 1;
-    color: var(--text);
+    color: #999;
+    font-variant-numeric: tabular-nums;
   }
 
   .date-month {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
+    font-size: 9px;
+    color: #777;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .card-info {
@@ -177,17 +176,16 @@
   }
 
   .card-city {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    line-height: 1.1;
-    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #d8d4cc;
   }
 
   .card-venue {
-    font-size: 11px;
-    color: var(--muted);
+    font-size: 10px;
+    color: #888;
     margin-top: 3px;
     white-space: nowrap;
     overflow: hidden;
@@ -212,15 +210,25 @@
     font-size: 10px;
     padding: 3px 8px;
     border-radius: 0;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
-    letter-spacing: 1px;
+    color: #999;
+    border: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
   }
 
-  .days-soon { background: rgba(232,0,28,0.15); color: var(--accent); border: 1px solid rgba(232,0,28,0.4); }
-  .days-near { background: rgba(255,152,0,0.1); color: var(--yellow); border: 1px solid rgba(255,152,0,0.3); }
-  .days-far  { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .days-past { background: transparent; color: #333; border: 1px solid #222; }
+  .days-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: #777;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  .days-soon { color: #999; border: 1px solid var(--border); }
+  .days-near { color: #999; border: 1px solid var(--border); }
+  .days-far  { color: #999; border: 1px solid var(--border); }
+  .days-past { color: #555; border: 1px solid #2a2a2a; }
 
   /* FILL BAR */
   .fill-section {
@@ -237,10 +245,10 @@
 
   .fill-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
+    font-size: 10px;
+    color: #999;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
   }
 
   .fill-numbers {
@@ -250,28 +258,31 @@
   }
 
   .fill-sold {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
     font-weight: 700;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
   .fill-cap {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: var(--muted);
+    color: #777;
+    font-variant-numeric: tabular-nums;
   }
 
   .fill-pct {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
     font-weight: 700;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
   .bar-track {
     height: 2px;
-    background: var(--border);
+    background: #3a3a3a;
     overflow: hidden;
   }
 
@@ -280,10 +291,9 @@
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .bar-green  { background: #4caf50; }
+  .bar-green  { background: #3a7d44; }
   .bar-yellow { background: #ff9800; }
-  .bar-red    { background: var(--accent); }
-  .bar-lime   { background: var(--accent); }
+  .bar-red    { background: #e8001c; }
 
   /* MANUAL CAPACITY EDIT */
   .cap-edit {
@@ -452,10 +462,10 @@
   /* LAST UPDATE */
   .last-update {
     text-align: center;
-    padding: 24px;
+    padding: 20px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px;
-    color: #333;
+    color: #666;
     letter-spacing: 1px;
   }
 
@@ -463,12 +473,12 @@
   .section-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px;
-    color: #333;
+    color: #666;
     text-transform: uppercase;
-    letter-spacing: 3px;
-    padding: 20px 0 8px;
+    letter-spacing: 2px;
+    padding: 12px 0 8px;
     border-top: 1px solid var(--border);
-    margin-top: 8px;
+    margin-top: 4px;
   }
 
   /* PROXY NOTICE */
@@ -679,16 +689,23 @@ function saveConfig() {
 // ============================================================
 //  API CALLS (through proxy)
 // ============================================================
-async function apiFetch(path, body = null) {
+async function apiFetch(path, body = null, retries = 3, delay = 1500) {
   const url = state.proxyUrl + path;
   const opts = {
     method: body ? 'POST' : 'GET',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
   };
   if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, opts);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    } catch(e) {
+      if (attempt === retries) throw e;
+      await new Promise(r => setTimeout(r, delay * attempt));
+    }
+  }
 }
 
 async function fetchData() {
@@ -808,16 +825,15 @@ function buildCard(ev, isPast) {
   else if (daysLeft <= 30) { badgeClass = 'days-near'; badgeText = `${daysLeft} дн`; }
   else { badgeClass = 'days-far'; badgeText = `${daysLeft} дн`; }
 
-  // Bar colour
+  // Bar colour — green 70%+, yellow 40–70%, red <40%
   let barClass;
-  if (pct >= 90)      barClass = 'bar-lime';
-  else if (pct >= 70) barClass = 'bar-green';
+  if (pct >= 70)      barClass = 'bar-green';
   else if (pct >= 40) barClass = 'bar-yellow';
   else                barClass = 'bar-red';
 
   // Sold colour
-  let soldColor = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--accent2)';
-  if (isPast) soldColor = 'var(--muted)';
+  let soldColor = pct >= 70 ? '#3a7d44' : pct >= 40 ? '#ff9800' : '#e8001c';
+  if (isPast) soldColor = '#555';
 
   const city  = getCityName(ev);
   const venue = ev.place_name || '—';
@@ -835,6 +851,7 @@ function buildCard(ev, isPast) {
       </div>
       <div class="card-right">
         <span class="days-badge ${badgeClass}">${badgeText}</span>
+        ${!isPast ? '<span class="days-sub">до концерта</span>' : ''}
       </div>
     </div>
     <div class="fill-section">
