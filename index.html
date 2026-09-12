@@ -93,7 +93,7 @@
   /* SUMMARY ROW */
   .summary {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
     background: var(--border);
     border-bottom: 1px solid var(--border);
@@ -121,6 +121,14 @@
     letter-spacing: 2px;
     margin-top: 5px;
     font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Узкие экраны (320px и уже): «Ср. заполнение» с letter-spacing 2px не влезало
+     в колонку и распирало сводку на ~5px вправо — появлялся горизонтальный скролл.
+     С 330px и шире вёрстка не меняется. */
+  @media (max-width: 340px) {
+    .summary-card  { padding: 18px 8px; }
+    .summary-label { letter-spacing: 1px; }
   }
 
   /* MAIN */
@@ -601,6 +609,10 @@
 const STORAGE_KEY = 'tour_dashboard_v2';
 const REFRESH_INTERVAL = 6 * 60 * 60 * 1000; // 6 часов
 
+// Пороги заполнения: зелёный от 50%, жёлтый 30–49%, красный до 29%
+const FILL_GREEN  = 50;
+const FILL_YELLOW = 30;
+
 let state = {
   proxyUrl: 'https://long-mud-44eb.smirnovaofc.workers.dev',
   tourTitle: 'Boulevard Depo — Тур а-ля карт',
@@ -828,15 +840,9 @@ function buildCard(ev, isPast) {
   else if (daysLeft <= 30) { badgeClass = 'days-near'; badgeText = `${daysLeft} дн`; }
   else { badgeClass = 'days-far'; badgeText = `${daysLeft} дн`; }
 
-  // Bar colour — green 70%+, yellow 40–70%, red <40%
-  let barClass;
-  if (pct >= 70)      barClass = 'bar-green';
-  else if (pct >= 40) barClass = 'bar-yellow';
-  else                barClass = 'bar-red';
-
-  // Sold colour
-  let soldColor = pct >= 70 ? '#3a7d44' : pct >= 40 ? '#ff9800' : '#e8001c';
-  if (isPast) soldColor = '#555';
+  // Цвет полосы и цифр по заполнению (см. FILL_GREEN / FILL_YELLOW)
+  const barClass = fillBarClass(pct);
+  const soldColor = isPast ? '#555' : fillColor(pct);
 
   const city  = getCityName(ev);
   const venue = ev.place_name || '—';
@@ -893,6 +899,18 @@ function getCityName(ev) {
     return parts[0].trim();
   }
   return ev.name || '—';
+}
+
+function fillColor(pct) {
+  if (pct >= FILL_GREEN)  return '#3a7d44';
+  if (pct >= FILL_YELLOW) return '#ff9800';
+  return '#e8001c';
+}
+
+function fillBarClass(pct) {
+  if (pct >= FILL_GREEN)  return 'bar-green';
+  if (pct >= FILL_YELLOW) return 'bar-yellow';
+  return 'bar-red';
 }
 
 function getCap(ev) {
