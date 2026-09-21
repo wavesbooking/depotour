@@ -704,13 +704,19 @@ function saveConfig() {
 // ============================================================
 //  API CALLS (through proxy)
 // ============================================================
-async function apiFetch(path, body = null, retries = 3, delay = 1500) {
+// Условия выборки Qtickets: объект → ?payload=<url-encoded JSON>
+function apiPayload(payload) {
+  return '?payload=' + encodeURIComponent(JSON.stringify(payload));
+}
+
+// Прокси-воркер работает только на чтение, поэтому запросы всегда GET.
+// Фильтры Qtickets передаются query-параметром ?payload={...} — см. apiPayload().
+async function apiFetch(path, retries = 3, delay = 1500) {
   const url = state.proxyUrl + path;
   const opts = {
-    method: body ? 'POST' : 'GET',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    method: 'GET',
+    headers: { 'Accept': 'application/json' },
   };
-  if (body) opts.body = JSON.stringify(body);
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const res = await fetch(url, opts);
@@ -735,7 +741,13 @@ async function fetchData() {
       );
     } else {
       // Загружаем все активные
-      const r = await apiFetch('/events', { where: [{ column: 'deleted_at', operator: 'null' }], orderBy: { id: 'asc' }, page: 1 });
+      // POST /events в Qtickets — это СОЗДАНИЕ мероприятия, а не поиск:
+      // фильтрованный список берётся GET-ом с payload.
+      const r = await apiFetch('/events' + apiPayload({
+        where:   [{ column: 'deleted_at', operator: 'null' }],
+        orderBy: { id: 'asc' },
+        page:    1,
+      }));
       events = r.data || [];
     }
 
