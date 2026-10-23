@@ -143,7 +143,12 @@
     overflow: hidden;
   }
 
-  .concert-card.past { opacity: 0.3; }
+  /* Прошедшие концерты остаются в дашборде с финальной статистикой.
+     Не затемняем — отличаем зелёной полоской слева и бейджем «состоялся». */
+  .concert-card.past {
+    opacity: 1;
+    border-left: 2px solid #3a7d44;
+  }
 
   .card-header {
     display: flex;
@@ -239,7 +244,11 @@
   .days-soon { color: #999; border: 1px solid var(--border); }
   .days-near { color: #999; border: 1px solid var(--border); }
   .days-far  { color: #999; border: 1px solid var(--border); }
-  .days-past { color: #555; border: 1px solid #2a2a2a; }
+  .days-past {
+    color: #3a7d44;
+    border: 1px solid rgba(58,125,68,0.45);
+    background: rgba(58,125,68,0.08);
+  }
 
   /* FILL BAR */
   .fill-section {
@@ -632,6 +641,9 @@ let state = {
     '225269': { cap: 3500,  soldOverride: null },
   },      // { eventId: { cap: N, soldOverride: N|null } }
   events: [],          // загруженные данные
+  // Финальная статистика прошедших концертов: { eventId: проданоНаМоментЗавершения }.
+  // Страховка на случай, если Qtickets перестанет отдавать продажи по архивному показу.
+  finals: {},
   lastFetch: null,
 };
 
@@ -656,6 +668,7 @@ function loadState() {
     if (saved) {
     const parsed = JSON.parse(saved);
     if (parsed.events) state.events = parsed.events;
+    if (parsed.finals) state.finals = parsed.finals;
     if (parsed.lastFetch) state.lastFetch = parsed.lastFetch;
   }
   } catch(e) {}
@@ -678,6 +691,7 @@ function saveState() {
     tourTitle: state.tourTitle,
     eventIds: state.eventIds,
     capacities: state.capacities,
+    finals: state.finals,
     lastFetch: state.lastFetch,
     events: state.events,
   }));
@@ -766,6 +780,7 @@ async function fetchData() {
     }));
 
     state.events = events;
+    snapshotFinals(events);
     state.lastFetch = new Date().toISOString();
     saveState();
     renderDashboard();
@@ -804,7 +819,8 @@ function renderDashboard() {
   const allCap  = sorted.reduce((s, e) => s + getCap(e), 0);
   const avgFill = allCap ? Math.round(allSold / allCap * 100) : 0;
 
-  document.getElementById('sumShows').textContent = upcoming.length;
+  // Все три цифры сводки считаем по всему туру, включая прошедшие концерты
+  document.getElementById('sumShows').textContent = sorted.length;
   document.getElementById('sumSold').textContent  = allSold.toLocaleString('ru');
   document.getElementById('sumFill').textContent  = avgFill + '%';
   document.getElementById('summaryRow').style.display = '';
@@ -847,14 +863,15 @@ function buildCard(ev, isPast) {
 
   // Days badge
   let badgeClass, badgeText;
-  if (isPast) { badgeClass = 'days-past'; badgeText = 'завершён'; }
+  if (isPast) { badgeClass = 'days-past'; badgeText = 'состоялся'; }
   else if (daysLeft <= 7)  { badgeClass = 'days-soon'; badgeText = daysLeft === 0 ? 'СЕГОДНЯ' : `${daysLeft} дн`; }
   else if (daysLeft <= 30) { badgeClass = 'days-near'; badgeText = `${daysLeft} дн`; }
   else { badgeClass = 'days-far'; badgeText = `${daysLeft} дн`; }
 
   // Цвет полосы и цифр по заполнению (см. FILL_GREEN / FILL_YELLOW)
+  // У прошедших концертов цвет сохраняем — это финальный результат, а не «серый архив»
   const barClass = fillBarClass(pct);
-  const soldColor = isPast ? '#555' : fillColor(pct);
+  const soldColor = fillColor(pct);
 
   const city  = getCityName(ev);
   const venue = ev.place_name || '—';
@@ -872,7 +889,7 @@ function buildCard(ev, isPast) {
       </div>
       <div class="card-right">
         <span class="days-badge ${badgeClass}">${badgeText}</span>
-        ${!isPast ? '<span class="days-sub">до концерта</span>' : ''}
+        <span class="days-sub">${isPast ? 'финальный итог' : 'до концерта'}</span>
       </div>
     </div>
     <div class="fill-section">
@@ -934,7 +951,26 @@ function getCap(ev) {
 function getSold(ev) {
   const manual = state.capacities[ev.id];
   if (manual?.soldOverride != null) return manual.soldOverride;
-  return ev._soldCount || 0;
+
+  const fromApi = ev._soldCount || 0;
+
+  // У прошедших концертов берём максимум из API и сохранённого итога,
+  // чтобы цифра не откатилась к нулю, если Qtickets заархивирует показ.
+  if (isPastEvent(ev)) return Math.max(fromApi, state.finals[ev.id] || 0);
+  return fromApi;
+}
+
+function isPastEvent(ev) {
+  return getEventDate(ev) < new Date();
+}
+
+// Фиксируем итог прошедших концертов: пишем только вверх, вниз не откатываем
+function snapshotFinals(events) {
+  events.forEach(ev => {
+    if (!isPastEvent(ev)) return;
+    const sold = ev._soldCount || 0;
+    if (sold > (state.finals[ev.id] || 0)) state.finals[ev.id] = sold;
+  });
 }
 
 function escHtml(s) {
